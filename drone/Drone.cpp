@@ -52,9 +52,10 @@ Drone::Drone()
 	Timer1 = Timer2 = count = 0;
 	
 }
+
 //***********************************FILTRO KALMAN DE 1 DIMENSÃO******************************************
 void Drone::Kalman1D(float &KalmanState,float &KalmanUncertainty, const float &KalmanInput, 
-					 const float &KalmanMeasurement)
+					           const float &KalmanMeasurement)
 {
 	KalmanState       = KalmanState + 0.004*KalmanInput;
 	KalmanUncertainty = KalmanUncertainty + 0.004*0.004*4*4;
@@ -62,6 +63,7 @@ void Drone::Kalman1D(float &KalmanState,float &KalmanUncertainty, const float &K
 	KalmanState       = KalmanState + KalmanGain*(KalmanMeasurement - KalmanState);
 	KalmanUncertainty = (1 - KalmanGain)*KalmanUncertainty;
 }
+
 //********************************************************************************************************
 void Drone::MainControlSetup(const int &serial, const int &ch1, const int &ch2, const int &ch3, 
                              const int &ch4,    const int &motor1, const int &motor2, const int &motor3, 
@@ -86,6 +88,7 @@ void Drone::MainControlSetup(const int &serial, const int &ch1, const int &ch2, 
 	MPUconfigSetup();
 	CalibrarMPU();
 }
+
 //********************************************************************************************************
 void Drone::MainControlLoop(){
 	//##############################FILTRO DE KALMAN############################
@@ -178,6 +181,7 @@ void Drone::MainControlLoop(){
 	while (micros() - LoopTimer < 4000); // tempo de espera para novo loop de controle... 
 	LoopTimer = micros(); 				 // a frequência usada é de 250Hz
 }
+
 //********************************************************************************************************
 void Drone::reset_pid() 
 {
@@ -187,6 +191,7 @@ void Drone::reset_pid()
 	PrevErrorAngleRoll = 0; PrevErrorAnglePitch = 0; 
 	PrevItermAngleRoll = 0; PrevItermAnglePitch = 0;
 }
+
 //********************************************************************************************************
 void Drone::MPUconfigSetup() 
 {
@@ -195,14 +200,14 @@ void Drone::MPUconfigSetup()
 		while (1) 
 		{
 			Serial.println("error");
-	  		yield();
+	  	yield();
 		}
 	}
-  
 	mpu.setAccelerometerRange(MPU6050_RANGE_8_G);//2G, 4G, 8G, 16G
 	mpu.setGyroRange(MPU6050_RANGE_500_DEG);     //250deg/s, 500deg/s, 1000deg/s, 2000deg/s
 	mpu.setFilterBandwidth(MPU6050_BAND_10_HZ);  //5Hz, 10Hz, 21Hz, 44Hz, 94Hz, 184Hz, 260Hz
 }
+
 //********************************************************************************************************
 void Drone::CalibrarMPU()
 {
@@ -220,6 +225,7 @@ void Drone::CalibrarMPU()
 	
 	calibration = true;
 }
+
 //********************************************************************************************************
 void Drone::MPUgetSignalsLoop() 
 {	
@@ -243,31 +249,33 @@ void Drone::MPUgetSignalsLoop()
 	RateRoll  -= (RateCalibrationRoll/2000)  - 1.2;
 	RatePitch -= (RateCalibrationPitch/2000) - 1.5;
 	RateYaw   -= (RateCalibrationYaw/2000)   - 0;
-	AceX -= 0.02;
-	AceY -= 0.03;
-	AceZ -= 0.13;
+	AceX      -= 0.02;
+	AceY      -= 0.03;
+	AceZ      -= 0.13;
   }
+
+  Kalman1D(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);     // chamada da função do filtro afim...
+  Kalman1D(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch); // ...
 }
+
 //********************************************************************************************************
 void Drone::DisplaySerialMpuData()
 {	
-	if ((millis() - Timer1) >= 800)
+	if ((millis() - Timer1) >= 500)
 	{
 		Timer1 = millis();
-		
-		Serial.printf("ang: %f \n", AceX);
-	
-		//Serial.printf("RateRoll: %f RatePitch %f RateYaw %f \n", RateRoll, RatePitch, RateYaw);
-		
-		//Serial.printf("Angulo Roll %f\n Angulo Pitch %f\n", AngleRoll, AnglePitch);
+    
+		Serial.printf("KalmanAngleRoll: %.3f // KalmanAnglePitch: %.3f \n", KalmanAngleRoll, KalmanAnglePitch);
+//		Serial.printf("RateRoll: %f // RatePitch: %f // RateYaw: %f \n", RateRoll, RatePitch, RateYaw);
+//		Serial.printf("Angulo Roll: %f // Angulo Pitch: %f \n", AngleRoll, AnglePitch);
 	}
 }
+
 //********************************************************************************************************
 void Drone::DisplayPlotterMpuData()
 {
 	Kalman1D(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);     // chamada da função do filtro afim...
-  
-  	Kalman1D(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch); // ...
+  Kalman1D(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch); // ...
 
 	if ((millis() - Timer2) >= 10){
 		Timer2 = millis();
@@ -279,6 +287,7 @@ void Drone::DisplayPlotterMpuData()
     
 	}
 }
+
 //********************************************************************************************************
 void Drone::setupPWM(const int &freq, const int &resolution, const int &pin, const int &ch)
 {
@@ -286,6 +295,7 @@ void Drone::setupPWM(const int &freq, const int &resolution, const int &pin, con
   ledcSetup(ch, freq, resolution);// ...
   ledcAttachPin(pin, ch); // Funções para definição do PWM na ESP32
 }
+
 //********************************************************************************************************
 void Drone::controlSpeed(int &speed, int ch)
 {
@@ -293,12 +303,14 @@ void Drone::controlSpeed(int &speed, int ch)
 	// min_sped=257 max_sped=511 para resolução = 10 bits
 	ledcWrite(ch, speed); // Função para mudança do PWM na ESP32
 }
+
 //********************************************************************************************************
 void Drone::readPWMSetup(const uint8_t &PinX)
 {
 	// Função para adequar os pinos que vão receber o PWM do controlador
 	pinMode(PinX, INPUT);
 }
+
 //********************************************************************************************************
 void Drone::readPWMLoop_SM(int pinX, int ch)
 {
@@ -311,11 +323,13 @@ void Drone::readPWMLoop_SM(int pinX, int ch)
 	Serial.println(" ");
 
 }
+
 //********************************************************************************************************
 int Drone::readPWMLoop(const uint8_t &PinX)
 {
 	return pulseIn(PinX, HIGH); 
 }
+
 //********************************FUNÇÃO GERAL PARA O CONTROLADOR PID*************************************
 void Drone::pid_equation(const float &Error, const float &P , const float &I, const float &D, 
 						 float &PrevError, float &PrevIterm, float &Angle)
@@ -337,12 +351,14 @@ void Drone::pid_equation(const float &Error, const float &P , const float &I, co
 	PrevIterm = Iterm;
 
 }
+
 void Drone::pid_angle()
 {
 	pid_equation(ErrorAngleRoll, PAngleRoll, IAngleRoll, DAngleRoll, PrevErrorAngleRoll, PrevItermAngleRoll, DesiredRateRoll); 
 
 	pid_equation(ErrorAnglePitch, PAnglePitch, IAnglePitch, DAnglePitch, PrevErrorAnglePitch, PrevItermAnglePitch, DesiredRatePitch);
 }
+
 //********************************************************************************************************
 void Drone::pid_rate()
 {
@@ -357,10 +373,12 @@ void Drone::pid_rate()
 	pid_equation(ErrorRateYaw, PRateYaw, IRateYaw, DRateYaw, PrevErrorRateYaw, PrevItermRateYaw, InputYaw);
 
 }
+
 //********************************************************************************************************
 Data Drone::getData(){
 	return datas;
 }
+
 //********************************************************************************************************
 void Drone::testForData(){
   if(InputThrottle > 1300 && !breaker){
