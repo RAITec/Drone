@@ -28,17 +28,19 @@ void Wifi::connecting(){
 
 void Wifi::getData(Data newData){
     Data data = newData;
-    
-     string mensagem = 
-        "Motor1: " + to_string(data.motor1) + 
-     " , Motor2: " + to_string(data.motor2) + 
-     " , Motor3: " + to_string(data.motor3) + 
-     " , Motor4: " + to_string(data.motor4) + 
-     " , Angle_Roll: " + to_string(data.roll) +
-     " , Angle_Pitch: " + to_string(data.pitch) +
-     " , Kalman_Angle_Roll: " + to_string(data.kRoll) +
-     " , Kalman_Angle_Pitch: " + to_string(data.kPitch) + 
-     " , Tempo: " + to_string(data.tempo) + "\n";
+
+      //string mensagem = "oioi\n";
+
+      string mensagem = 
+         "Motor1: " + to_string(data.motor1) + 
+      " , Motor2: " + to_string(data.motor2) + 
+      " , Motor3: " + to_string(data.motor3) + 
+      " , Motor4: " + to_string(data.motor4) + 
+      " , Angle_Roll: " + to_string(data.roll) +
+      " , Angle_Pitch: " + to_string(data.pitch) +
+      " , Kalman_Angle_Roll: " + to_string(data.kRoll) +
+      " , Kalman_Angle_Pitch: " + to_string(data.kPitch) + 
+      " , Tempo: " + to_string(data.tempo) + "\n";
     
 //    string mensagem = 
 //    "Angle_Roll: " + to_string(data.roll) +
@@ -54,5 +56,8 @@ void Wifi::getData(Data newData){
     canal->print(mensagemFinal);
     Serial.printf("%s", mensagemFinal);
     canal->endPacket();
+
+    free(mensagemFinal);
+
     delay(10);
 }

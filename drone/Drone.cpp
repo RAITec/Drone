@@ -391,14 +391,14 @@ void Drone::testForData(){
   }
 
   if(millis() - timer2 > 4000 && timer2 != 0){
-    MotorVeloci1 = 0;
-    MotorVeloci2 = 0;
+    //MotorVeloci1 = 0;
+    //MotorVeloci2 = 0;
   return;
   }
 
   if(pass){
-    MotorVeloci1 = InputThrottle*1.3;
-    MotorVeloci2 = InputThrottle*1.3;
+    MotorVeloci1 = InputThrottle*1.15;
+    MotorVeloci2 = InputThrottle*1.15;
   }
 
   

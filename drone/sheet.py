@@ -7,14 +7,14 @@ motor1 = []
 motor2 = []
 motor3 = []
 motor4 = []
-angle_rool = []
+angle_roll = []
 angle_pitch = []
-kalman_rool = []
+kalman_roll = []
 kalman_pitch = []
 tempo = []
 
 #Importante tirar a a linha que contem somente os nomes, acho que buga
-with open('dados_impulso_pitch.csv', 'r') as arquivo:
+with open('dados21-01.csv', 'r') as arquivo:
     leitor_csv = csv.reader(arquivo)
     
     for linha in leitor_csv:
@@ -22,9 +22,9 @@ with open('dados_impulso_pitch.csv', 'r') as arquivo:
         motor2.append(int(linha[1]))
         motor3.append(int(linha[2]))
         motor4.append(int(linha[3]))
-        angle_rool.append(float(linha[4]))
+        angle_roll.append(float(linha[4]))
         angle_pitch.append(float(linha[5]))
-        kalman_rool.append(float(linha[6]))
+        kalman_roll.append(float(linha[6]))
         kalman_pitch.append(float(linha[7]))
         tempo.append(int((linha[8])))
         print(float(linha[5]))
@@ -32,7 +32,7 @@ with open('dados_impulso_pitch.csv', 'r') as arquivo:
 
        
 #Coloque aki qual dado você quer analisar :)
-dado = angle_pitch
+dado = kalman_pitch
 
 dado = np.array(dado)
 tempo = np.array(tempo)

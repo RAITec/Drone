@@ -3,7 +3,7 @@ import csv
 
 ser = serial.Serial('/dev/tnt1', 115200)
 
-with open('dados222.csv', mode='w', newline='') as file:
+with open('dados21-01.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     #writer.writerow(['Motor1', 'Motor2', 'Motor3', 'Motor4', 'Angle_Roll', 'Angle_Pitch', 'Kalman_Angle_Roll', 'Kalman_Angle_Pitch', 'Tempo'])
     

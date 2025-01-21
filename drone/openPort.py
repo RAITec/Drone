@@ -24,9 +24,9 @@ while ser.is_open:
         pass
 '''
 
+#Yan & Pablo esteve aqui!!!!
 
-
-host = "192.168.67.61"  # Aceita conexões de qualquer IP
+host = "192.168.140.152"  # Aceita conexões de qualquer IP
 port = 5000      # Porta para ouvir o ESP32
 
 
